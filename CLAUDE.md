@@ -47,3 +47,53 @@
 - `mcp__blender__execute_blender_code` を使用してPythonでプロシージャル生成
 - 各パーツを段階的に作成・組み合わせ
 - パラメータ化による調整の容易性確保
+
+## 実装環境
+
+### 開発環境
+- **Python**: 3.11+
+- **パッケージ管理**: uv
+- **コード品質**: ruff (linting & formatting)
+- **型チェック**: mypy
+
+### ユーティリティライブラリ
+`image_to_3d_utils.py` に実装済み：
+
+#### ImageTo3DModeler
+基本的なモデリング操作クラス
+- `create_primitive()`: プリミティブ（円柱、立方体、球、円錐）の作成
+- `create_material()`: マテリアル作成とノード設定
+- `apply_material()`: オブジェクトへのマテリアル適用
+- `boolean_operation()`: ブーリアン演算による形状結合
+
+#### ParametricModeler  
+データ駆動型モデル生成クラス
+- `create_from_json()`: JSON定義からの自動モデル生成
+- パラメータ化されたワークフロー
+
+#### ShapeAnalyzer
+形状・色彩解析ユーティリティ
+- `analyze_proportions()`: 画像比率分析
+- `color_to_blender()`: 16進数→Blender RGBA変換
+
+### 使用方法
+```python
+# Blender内でライブラリをインポート
+exec(open('image_to_3d_utils.py').read())
+
+# 基本的な使用例
+modeler = ImageTo3DModeler()
+obj = modeler.create_primitive('cylinder', 'torch_handle', (0,0,0), (0.2,0.2,2))
+```
+
+### 開発コマンド
+```bash
+# コード品質チェック
+uv run --group dev ruff check image_to_3d_utils.py
+
+# 自動修正
+uv run --group dev ruff check --fix image_to_3d_utils.py
+
+# 型チェック  
+uv run --group dev mypy image_to_3d_utils.py
+```
